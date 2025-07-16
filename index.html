@@ -9,29 +9,24 @@
 
 <body>
 
-    <iframe name="hiddenFrame" style="display:none;"></iframe>
-    
   <header class="header">
     <div class="logo-nav-container">
       <img src="images/logo-placeholder.png" alt="Company Logo" class="logo" />
-    <nav class="navbar">
-      <a href="https://bughouse-catalog.netlify.app/" target="_blank" rel="noopener noreferrer">All Materials</a>
-      <a href="https://bughouseleave-behinds.netlify.app/" target="_blank" rel="noopener noreferrer">Leave Behinds</a>
-      <a href="https://bughousedoor-hangers.netlify.app/" target="_blank" rel="noopener noreferrer">Door Hangers</a>
-      <a href="https://bughousethank-you-cards.netlify.app/" target="_blank" rel="noopener noreferrer">Thank You Cards</a>
-      <a href="https://bughousecoffee-shop-takeover-cards.netlify.app/" target="_blank" rel="noopener noreferrer">Coffee Shop Tak...</a>
-      <a href="https://bughouseflyers.netlify.app/" target="_blank" rel="noopener noreferrer">Flyers</a>
-      <a href="https://bughousequestions.netlify.app/" target="_blank" rel="noopener noreferrer">FAQ</a>
-      <a href="https://bughousequestions.netlify.app/" target="_blank" rel="noopener noreferrer">Contact</a>
-    </nav>
+      <nav class="navbar">
+        <a href="/">Home</a>
+        <a href="https://bughouseflyers.netlify.app/" target="_blank">Flyers</a>
+        <a href="https://bughousequestions.netlify.app/" target="_blank">Questions</a>
+      </nav>
     </div>
   </header>
 
-   <main style="padding: 2rem; max-width: 600px; margin: auto;">
-    <h1 style="color: #b00;">Let's Connect</h1>
+  <main style="padding: 2rem; max-width: 600px; margin: auto;">
+    <h1 style="color: #b00;">How Can We Help?</h1>
+    <p>Share Your Custom Request Here!</p>
+    <h1 style="color: #b00;">Let’s Connect</h1>
     <p>Need support, have a request, or want to leave feedback? Fill out the form below.</p>
 
-    <form id="contactForm" class="product-details" onsubmit="handleContactSubmit(event)">
+    <form id="contactForm" class="product-details">
       <input type="text" name="name" placeholder="Your Name" required />
       <input type="email" name="email" placeholder="Your Email" required />
       <input type="text" name="subject" placeholder="Subject" required />
@@ -49,30 +44,37 @@
   </footer>
 
   <script>
-    function handleContactSubmit(event) {
-      event.preventDefault();
-      const form = document.getElementById("contactForm");
-      const formData = new FormData(form);
+    const ZAPIER_WEBHOOK_URL = "https://hooks.zapier.com/hooks/catch/XXXXXXX/YYYYYYY"; // 🔁 Replace with your actual Zapier webhook URL
 
-      // Replace this with your actual Formspree endpoint or backend
-      fetch("https://formspree.io/f/your@email.com", {
+    document.getElementById("contactForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const form = event.target;
+      const formData = {
+        name: form.name.value,
+        email: form.email.value,
+        subject: form.subject.value,
+        message: form.message.value
+      };
+
+      fetch(ZAPIER_WEBHOOK_URL, {
         method: "POST",
-        body: formData,
-        headers: { 'Accept': 'application/json' }
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
       })
       .then(response => {
         if (response.ok) {
           form.reset();
           document.getElementById("thankYouMessage").style.display = "block";
         } else {
-          alert("Something went wrong. Please try again.");
+          alert("There was an error. Please try again.");
         }
       })
       .catch(error => {
-        console.error(error);
-        alert("There was an error sending your message.");
+        console.error("Zapier error:", error);
+        alert("Network error. Please try again.");
       });
-    }
+    });
   </script>
 
 </body>
